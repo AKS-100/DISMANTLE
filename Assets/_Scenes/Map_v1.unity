@@ -7972,47 +7972,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 670791982}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &672266425 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3561525329925849694, guid: 4041021e963d13f42825472ff8918b10,
+--- !u!114 &672266426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9221238154057903900, guid: 4041021e963d13f42825472ff8918b10,
     type: 3}
   m_PrefabInstance: {fileID: 952804770}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &672266426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 672266425}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c0568fd8345972489c71c7885b01264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileGameObject: {fileID: 5227786296433408069, guid: ff942384a13829e43ad2ec6a818be4df,
-    type: 3}
-  childProjectileToFireLocation: 0
-  fireEffect: {fileID: 2280374104605115017, guid: e551cbc9fcb8cb94d8abac7c0514d3f4,
-    type: 3}
-  fireLocationTransform: {fileID: 1704259043}
-  fireDelay: 0.02
-  fireType: 0
-  maximumToFire: 1
-  maximumSpreadDegree: 0
-  autoTargetGameObject: {fileID: 0}
-  available: 1
-  gunAnimator: {fileID: 0}
-  shootTriggerName: Shoot
-  idleAnimationName: Idle
-  useAmmo: 1
-  ammunitionID: 0
-  mustReload: 1
-  magazineSize: 6
-  roundsLoaded: 6
-  reloadTime: 0.5
-  weaponImage: {fileID: 21300000, guid: c466cc9ce2cd82d43a8aa19ac4b43655, type: 3}
-  ammoImage: {fileID: 21300000, guid: e0450103a4a2cbe4fbc05ba29d1056ca, type: 3}
 --- !u!4 &672266427 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3565232710522545192, guid: 4041021e963d13f42825472ff8918b10,
@@ -13275,6 +13246,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2122107992}
     m_Modifications:
+    - target: {fileID: 2261663687498264717, guid: 4041021e963d13f42825472ff8918b10,
+        type: 3}
+      propertyPath: muzzleFlashPrefab
+      value: 
+      objectReference: {fileID: 1782395880954752, guid: 3dd9cf2e209c504448f1c4c6835675cf,
+        type: 3}
     - target: {fileID: 3561525329925849694, guid: 4041021e963d13f42825472ff8918b10,
         type: 3}
       propertyPath: m_Name
@@ -13333,11 +13310,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3561525329925849694, guid: 4041021e963d13f42825472ff8918b10,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 672266426}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4041021e963d13f42825472ff8918b10, type: 3}
 --- !u!1001 &961332317
 PrefabInstance:
@@ -22925,12 +22898,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4000011716061034, guid: a22c0c7e17126fa4f89534dc98bcac8f,
     type: 3}
   m_PrefabInstance: {fileID: 1703913362}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1704259043 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3559116747057015762, guid: 4041021e963d13f42825472ff8918b10,
-    type: 3}
-  m_PrefabInstance: {fileID: 952804770}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1713845531
 PrefabInstance:

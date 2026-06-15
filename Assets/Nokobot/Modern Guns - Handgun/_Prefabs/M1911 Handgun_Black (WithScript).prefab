@@ -26,17 +26,17 @@ PrefabInstance:
     - target: {fileID: 4213711620244162979, guid: 87e308cb23eea97419b3c2623d8bb3fa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.24
       objectReference: {fileID: 0}
     - target: {fileID: 4213711620244162979, guid: 87e308cb23eea97419b3c2623d8bb3fa,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.239
       objectReference: {fileID: 0}
     - target: {fileID: 4213711620244162979, guid: 87e308cb23eea97419b3c2623d8bb3fa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.346
       objectReference: {fileID: 0}
     - target: {fileID: 4213711620244162979, guid: 87e308cb23eea97419b3c2623d8bb3fa,
         type: 3}
@@ -77,6 +77,10 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4210100720165400533, guid: 87e308cb23eea97419b3c2623d8bb3fa,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9221238154057903900}
     - targetCorrespondingSourceObject: {fileID: 4634820778430586416, guid: 87e308cb23eea97419b3c2623d8bb3fa,
         type: 3}
       insertIndex: -1
@@ -100,6 +104,46 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 792734854622637451}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3561525329925849694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4210100720165400533, guid: 87e308cb23eea97419b3c2623d8bb3fa,
+    type: 3}
+  m_PrefabInstance: {fileID: 792734854622637451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9221238154057903900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3561525329925849694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0568fd8345972489c71c7885b01264, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileGameObject: {fileID: 5227786296433408069, guid: ff942384a13829e43ad2ec6a818be4df,
+    type: 3}
+  childProjectileToFireLocation: 0
+  fireEffect: {fileID: 0}
+  fireLocationTransform: {fileID: 3559116747057015762}
+  fireDelay: 0.02
+  fireType: 0
+  maximumToFire: 1
+  maximumSpreadDegree: 0
+  autoTargetGameObject: {fileID: 0}
+  available: 1
+  gunAnimator: {fileID: 0}
+  shootTriggerName: Shoot
+  idleAnimationName: Idle
+  useAmmo: 0
+  ammunitionID: 0
+  mustReload: 1
+  magazineSize: 6
+  roundsLoaded: 6
+  reloadTime: 0.5
+  weaponImage: {fileID: 21300000, guid: c466cc9ce2cd82d43a8aa19ac4b43655, type: 3}
+  ammoImage: {fileID: 21300000, guid: e0450103a4a2cbe4fbc05ba29d1056ca, type: 3}
 --- !u!1 &5427520173708817339 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4634820778430586416, guid: 87e308cb23eea97419b3c2623d8bb3fa,
