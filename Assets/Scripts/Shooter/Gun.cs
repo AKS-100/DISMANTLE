@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +28,8 @@ public class Gun : MonoBehaviour
 
     // The time when this gun will be able to fire again
     private float ableToFireAgainTime = 0;
+    // Tracks whether this gun is currently reloading
+    private bool isReloading = false;
 
     [Tooltip("The number of projectiles to fire when firing")]
     public int maximumToFire = 1;
@@ -125,6 +127,11 @@ public class Gun : MonoBehaviour
             canFire = ableToFireAgainTime <= Time.time;
         }
 
+        if (isReloading)
+        {
+            canFire = false;
+        }
+
         if (canFire && HasAmmo())
         {
             if (projectileGameObject != null)
@@ -159,7 +166,7 @@ public class Gun : MonoBehaviour
                 roundsLoaded = Mathf.Clamp(roundsLoaded - 1, 0, magazineSize);
             }
         }
-        else if (useAmmo && mustReload && roundsLoaded == 0)
+        else if (useAmmo && mustReload && roundsLoaded == 0 && !isReloading)
         {
             StartCoroutine(Reload());
         }
@@ -194,6 +201,20 @@ public class Gun : MonoBehaviour
 
     /// <summary>
     /// Description:
+    /// Starts the reload coroutine if reloading is possible
+    /// Input: none
+    /// Return: void
+    /// </summary>
+    public void StartReload()
+    {
+        if (useAmmo && mustReload && roundsLoaded < magazineSize && !isReloading && AmmoTracker.HasAmmo(this))
+        {
+            StartCoroutine(Reload());
+        }
+    }
+
+    /// <summary>
+    /// Description:
     /// Coroutine that reloads this gun
     /// Inputs: N/A
     /// Outputs: IEnumerator
@@ -201,6 +222,7 @@ public class Gun : MonoBehaviour
     /// <returns>Coroutine</returns>
     private IEnumerator Reload()
     {
+        isReloading = true;
         ableToFireAgainTime = Time.time + reloadTime;
         if (AmmoTracker.HasAmmo(this))
         {
@@ -212,6 +234,7 @@ public class Gun : MonoBehaviour
             }
             AmmoTracker.Reload(this);
         }
+        isReloading = false;
     }
 
     /// <summary>
@@ -228,5 +251,14 @@ public class Gun : MonoBehaviour
         {
             gunAnimator.SetTrigger(shootTriggerName);
         }
+    }
+
+    /// <summary>
+    /// Standard Unity function called when the GameObject becomes disabled or inactive.
+    /// Resets the reloading state.
+    /// </summary>
+    private void OnDisable()
+    {
+        isReloading = false;
     }
 }

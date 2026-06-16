@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -192,9 +192,19 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void UpdateUI()
     {
-        foreach (UIelement uiElement in UIelements)
+        if (UIelements == null)
         {
-            uiElement.UpdateUI();
+            SetUpUIElements();
+        }
+        if (UIelements != null)
+        {
+            foreach (UIelement uiElement in UIelements)
+            {
+                if (uiElement != null)
+                {
+                    uiElement.UpdateUI();
+                }
+            }
         }
     }
 

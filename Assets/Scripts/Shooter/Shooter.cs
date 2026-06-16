@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -127,6 +127,11 @@ public class Shooter : MonoBehaviour
             if (previousWeaponInput.triggered)
             {
                 GoToPreviousWeapon();
+            }
+
+            if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+            {
+                ReloadEquippedGun();
             }
         }
     }
@@ -275,6 +280,20 @@ public class Shooter : MonoBehaviour
         {
             guns[equippedGunIndex].Fire();
         }   
+    }
+
+    /// <summary>
+    /// Description:
+    /// Reloads the currently equipped gun if possible
+    /// Input: none
+    /// Return: void
+    /// </summary>
+    public void ReloadEquippedGun()
+    {
+        if (guns[equippedGunIndex] != null && guns[equippedGunIndex].available)
+        {
+            guns[equippedGunIndex].StartReload();
+        }
     }
 
     /// <summary>

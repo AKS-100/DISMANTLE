@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,25 +27,42 @@ public class WeaponDisplay : UIelement
     /// </summary>
     public void DisplayGunInformation()
     {
-        Shooter playerShooter = GameManager.instance.player.GetComponentInChildren<PlayerController>().playerShooter;
+        if (GameManager.instance == null || GameManager.instance.player == null) return;
+        PlayerController playerController = GameManager.instance.player.GetComponentInChildren<PlayerController>();
+        if (playerController == null || playerController.playerShooter == null) return;
+        Shooter playerShooter = playerController.playerShooter;
 
-        if (ammoText != null && playerShooter.guns[playerShooter.equippedGunIndex].useAmmo && AmmoTracker._instance)
+        if (playerShooter.guns == null || playerShooter.guns.Count <= playerShooter.equippedGunIndex) return;
+        Gun equippedGun = playerShooter.guns[playerShooter.equippedGunIndex];
+        if (equippedGun == null) return;
+
+        if (equippedGun.useAmmo && AmmoTracker._instance)
         {
-            ammoText.text = AmmoTracker._instance[playerShooter.guns[playerShooter.equippedGunIndex].ammunitionID].ToString();
-            if (ammoPackDisplayImage != null && playerShooter.guns[playerShooter.equippedGunIndex].ammoImage != null)
+            if (ammoText != null)
+            {
+                ammoText.text = AmmoTracker._instance[equippedGun.ammunitionID].ToString();
+            }
+            if (ammoPackDisplayImage != null && equippedGun.ammoImage != null)
             {
                 ammoPackDisplayImage.color = new Color(255, 255, 255, 255);
-                ammoPackDisplayImage.texture = playerShooter.guns[playerShooter.equippedGunIndex].ammoImage.texture;
+                ammoPackDisplayImage.texture = equippedGun.ammoImage.texture;
             }
         }
         else
         {
-            ammoText.text = "";
-            ammoPackDisplayImage.color = new Color(0,0,0,0);
+            if (ammoText != null)
+            {
+                ammoText.text = "";
+            }
+            if (ammoPackDisplayImage != null)
+            {
+                ammoPackDisplayImage.color = new Color(0,0,0,0);
+            }
         }
-        if (playerShooter.guns[playerShooter.equippedGunIndex].weaponImage != null && gunDisplayImage != null)
+
+        if (equippedGun.weaponImage != null && gunDisplayImage != null)
         {
-            gunDisplayImage.texture = playerShooter.guns[playerShooter.equippedGunIndex].weaponImage.texture;
+            gunDisplayImage.texture = equippedGun.weaponImage.texture;
         }
     }
 

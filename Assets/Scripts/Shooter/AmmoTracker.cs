@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -40,6 +40,17 @@ public class AmmoTracker : MonoBehaviour
     [Tooltip("Whether this tracker saves and loads ammo data or is contained to this scene")]
     public bool isPersistent = true;
 
+    [System.Serializable]
+    public struct StartingAmmo
+    {
+        public int ammunitionID;
+        public int amount;
+    }
+
+    [Header("Starting Ammo")]
+    [Tooltip("The list of starting ammo for the player when they first play")]
+    public List<StartingAmmo> startingAmmoList = new List<StartingAmmo>();
+
     #region Constant Variables
     // The string to concatenate ammo IDs with to get/set ammo values stored in player prefs
     public const string AMMOPLAYERPREFSSTRING = "AmmoID";
@@ -62,6 +73,41 @@ public class AmmoTracker : MonoBehaviour
     {
         SetupAsSingleton();
         LoadStoredAmmo();
+    }
+
+    private void Start()
+    {
+        InitializeStartingAmmo();
+    }
+
+    private void InitializeStartingAmmo()
+    {
+        _ammo.Clear();
+        foreach (StartingAmmo entry in startingAmmoList)
+        {
+            this[entry.ammunitionID] = entry.amount;
+        }
+        GameManager.UpdateUIElements();
+    }
+
+    /// <summary>
+    /// Description:
+    /// Resets the ammo tracker to the starting ammo values and clears saved player prefs
+    /// Inputs: N/A
+    /// Outputs: N/A
+    /// </summary>
+    public static void ResetAmmo()
+    {
+        PlayerPrefs.DeleteKey(ALLSAVEDAMMOPREFSSTRING);
+        if (_instance != null)
+        {
+            _instance._ammo.Clear();
+            foreach (StartingAmmo entry in _instance.startingAmmoList)
+            {
+                _instance[entry.ammunitionID] = entry.amount;
+            }
+            GameManager.UpdateUIElements();
+        }
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -311,6 +311,7 @@ public class GameManager : MonoBehaviour
         score = 0;
         PlayerPrefs.SetInt("lives", 0);
         PlayerPrefs.SetInt("health", 0);
+        AmmoTracker.ResetAmmo();
     }
 
     /// <summary>
