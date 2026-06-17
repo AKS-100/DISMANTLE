@@ -1,154 +1,277 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
-/// Boss enemy AI script.
-/// Phase 1: Boss levitates (Levitate Idle animation plays).
-/// Phase 2: When the player enters attackRange, the boss lands and 
-///           performs the Sword_Regular_Combo melee attack animation.
+/// Full Boss AI with multiple phases and attacks.
+/// ANIMATOR PARAMETERS REQUIRED:
+///   isGrounded  (Bool)   — false = Levitate Idle, true = grounded
+///   isRunning   (Bool)   — true = Running
+///   attackIndex (Int)    — 0=none, 1=Slash, 2=Punch, 3=Combo
 /// </summary>
+[RequireComponent(typeof(NavMeshAgent))]
 public class BossEnemy : Enemy
 {
-    [Header("Boss Phase Settings")]
-    [Tooltip("Distance at which the boss drops down and begins the sword combo.")]
-    public float attackRange = 6f;
+    [Header("Boss – Detection")]
+    public float detectionRange = 18f;
 
-    [Tooltip("Name of the Bool parameter in the Animator that controls grounded/attacking state." +
-             " Must match exactly what you set in the Animator window.")]
-    public string isGroundedBoolName = "isGrounded";
+    [Header("Boss – Combat")]
+    public float attackRange    = 5f;
+    public float chaseRange     = 20f;
 
-    [Tooltip("How long (seconds) to wait after landing before starting the sword combo. " +
-             "Use this to let a landing animation finish if you have one.")]
-    public float landingDelay = 0.5f;
+    [Header("Boss – Movement")]
+    public float chaseSpeed     = 5f;
+    public float stopDistance   = 2.5f;
 
-    // ── internal state ──────────────────────────────────────────────
-    private enum BossPhase { Levitating, Landing, Attacking }
-    private BossPhase currentPhase = BossPhase.Levitating;
+    [Header("Boss – Landing")]
+    public float landingDelay   = 1.25f;
 
-    private bool isGroundedParamValid = false;
+    [Header("Boss – Attack Timings")]
+    public float slashDuration  = 1.2f;
+    public float punchDuration  = 1.0f;
+    public float comboDuration  = 1.8f;
+    public float attackCooldown = 2f;
 
-    // ── Unity lifecycle ─────────────────────────────────────────────
+    [Header("Boss – Hand2 Punch Collider")]
+    [Tooltip("Drag the hand2 bone's Collider here. Must be a Trigger.")]
+    public Collider hand2Collider;
+    public int punchDamage = 2;
 
+    [Header("Boss – Animator Parameter Names")]
+    public string isGroundedParam  = "isGrounded";
+    public string isRunningParam   = "isRunning";
+    public string attackIndexParam = "attackIndex";
+
+    // ── Internal State ─────────────────────────────────────
+    private enum BossPhase { Levitating, Landing, Grounded }
+    private enum GroundedState { Idle, Chasing, Attacking }
+
+    private BossPhase     phase        = BossPhase.Levitating;
+    private GroundedState groundState  = GroundedState.Idle;
+
+    private NavMeshAgent agent;
+    private bool attackOnCooldown = false;
+    private int  lastAttackIndex  = 0;
+    private bool landingStarted   = false;   // ← FIX: prevent multiple coroutine starts
+
+    // ── Setup ──────────────────────────────────────────────
     protected override void Setup()
     {
         base.Setup();
-
-        // Validate the animator parameter we need
-        if (animator != null)
-        {
-            foreach (AnimatorControllerParameter p in animator.parameters)
-            {
-                if (p.name == isGroundedBoolName && p.type == AnimatorControllerParameterType.Bool)
-                {
-                    isGroundedParamValid = true;
-                    break;
-                }
-            }
-
-            if (!isGroundedParamValid)
-            {
-                Debug.LogWarning($"[BossEnemy] Animator parameter '{isGroundedBoolName}' not found! " +
-                                 "Make sure the Bool parameter name in the Animator matches exactly.");
-            }
-
-            // Boss always starts levitating
-            SetGroundedAnimParam(false);
-        }
-    }
-
-    // ── core loop overrides ──────────────────────────────────────────
-
-    protected override void HandleMovement()
-    {
-        // Boss does not walk — it only changes phase.
         canMove = false;
 
-        // Always face the player while levitating or attacking
-        if (target != null && currentPhase != BossPhase.Landing)
+        agent = GetComponent<NavMeshAgent>();
+        if (agent != null)
         {
-            Vector3 dir = target.position - transform.position;
-            dir.y = 0f;
-            if (dir != Vector3.zero)
-            {
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    Quaternion.LookRotation(dir),
-                    Time.deltaTime * 5f
-                );
-            }
+            agent.speed           = chaseSpeed;
+            agent.stoppingDistance = stopDistance;
+            agent.updateRotation  = false;
+            agent.isStopped       = true;
         }
+
+        // Auto-configure hand2 collider for punch damage
+        if (hand2Collider != null)
+        {
+            Damage d = hand2Collider.GetComponent<Damage>();
+            if (d == null) d = hand2Collider.gameObject.AddComponent<Damage>();
+            d.teamId                   = 1;
+            d.damageAmount             = punchDamage;
+            d.destroyAfterDamage       = false;
+            d.dealDamageOnTriggerEnter = true;
+            hand2Collider.enabled      = false;
+        }
+
+        // Start in levitating state
+        SetAnimBool(isGroundedParam,  false);
+        SetAnimBool(isRunningParam,   false);
+        SetAnimInt (attackIndexParam, 0);
     }
 
-    protected override void HandleActions()
+    // ── Movement (called every FixedUpdate by base class) ──
+    protected override void HandleMovement()
     {
         if (target == null) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, target.position);
+        float dist = Vector3.Distance(transform.position, target.position);
 
-        switch (currentPhase)
+        switch (phase)
         {
+            // ─── LEVITATING ───────────────────────────────
             case BossPhase.Levitating:
-                // Wait until player is close enough, then land and attack
-                if (distanceToPlayer <= attackRange)
+                StopAgent();
+                FaceTarget();
+                // Only start landing ONCE
+                if (!landingStarted && dist <= detectionRange)
                 {
-                    StartCoroutine(LandAndAttack());
+                    landingStarted = true;
+                    StartCoroutine(LandRoutine());
                 }
                 break;
 
-            case BossPhase.Attacking:
-                // Let base TryToAttack handle damage logic
-                TryToAttack();
+            // ─── LANDING ─────────────────────────────────
+            case BossPhase.Landing:
+                StopAgent();
+                FaceTarget();
+                break;
 
-                // If the player escapes range, go back to levitating
-                if (distanceToPlayer > attackRange)
+            // ─── GROUNDED ────────────────────────────────
+            case BossPhase.Grounded:
+                // Escaped completely → return to sky
+                if (dist > chaseRange)
                 {
                     ReturnToLevitating();
+                    break;
                 }
-                break;
 
-            // Landing phase is managed by the coroutine
-            case BossPhase.Landing:
+                // Don't move while attacking
+                if (groundState == GroundedState.Attacking)
+                {
+                    StopAgent();
+                    FaceTarget();
+                    break;
+                }
+
+                if (dist <= attackRange)
+                {
+                    // In attack range → stop and prepare to attack
+                    StopAgent();
+                    FaceTarget();
+                    SetAnimBool(isRunningParam, false);
+                    groundState = GroundedState.Idle;
+                }
+                else
+                {
+                    // Player fled → chase
+                    ChasePlayer();
+                }
                 break;
         }
     }
 
-    // ── phase transitions ────────────────────────────────────────────
-
-    /// <summary>
-    /// Coroutine: boss drops to the ground, waits for landing animation, then attacks.
-    /// </summary>
-    private IEnumerator LandAndAttack()
+    // ── Actions (called every FixedUpdate by base class) ───
+    protected override void HandleActions()
     {
-        currentPhase = BossPhase.Landing;
+        if (target == null)                            return;
+        if (phase != BossPhase.Grounded)               return;
+        if (groundState == GroundedState.Attacking)    return;
+        if (attackOnCooldown)                          return;
 
-        // Tell animator to leave Levitate Idle
-        SetGroundedAnimParam(true);
-
-        // Wait for the landing animation (or just a short delay)
-        yield return new WaitForSeconds(landingDelay);
-
-        currentPhase = BossPhase.Attacking;
-        isAttacking = true;
+        float dist = Vector3.Distance(transform.position, target.position);
+        if (dist <= attackRange)
+        {
+            StartCoroutine(PerformRandomAttack());
+        }
     }
 
-    /// <summary>
-    /// Returns the boss to the levitating phase.
-    /// </summary>
+    // ── Phase Routines ──────────────────────────────────────
+    private IEnumerator LandRoutine()
+    {
+        phase = BossPhase.Landing;
+        SetAnimBool(isGroundedParam, true);            // triggers jump anim
+        yield return new WaitForSeconds(landingDelay); // wait for jump to finish
+        phase      = BossPhase.Grounded;
+        groundState = GroundedState.Idle;
+    }
+
     private void ReturnToLevitating()
     {
         StopAllCoroutines();
-        currentPhase = BossPhase.Levitating;
-        isAttacking = false;
-        SetGroundedAnimParam(false);
+        phase            = BossPhase.Levitating;
+        groundState      = GroundedState.Idle;
+        attackOnCooldown = false;
+        isAttacking      = false;
+        landingStarted   = false;   // allow landing again next time
+
+        StopAgent();
+        SetAnimBool(isGroundedParam,  false);
+        SetAnimBool(isRunningParam,   false);
+        SetAnimInt (attackIndexParam, 0);
+
+        if (hand2Collider != null) hand2Collider.enabled = false;
     }
 
-    // ── animator helper ──────────────────────────────────────────────
-
-    private void SetGroundedAnimParam(bool value)
+    // ── Movement Helpers ────────────────────────────────────
+    private void ChasePlayer()
     {
-        if (animator != null && isGroundedParamValid)
+        if (agent == null || target == null) return;
+        groundState = GroundedState.Chasing;
+        SetAnimBool(isRunningParam, true);
+        agent.isStopped = false;
+        agent.SetDestination(target.position);
+        FaceTarget();
+    }
+
+    private void StopAgent()
+    {
+        if (agent == null) return;
+        agent.isStopped = true;
+        agent.velocity  = Vector3.zero;
+    }
+
+    private void FaceTarget()
+    {
+        if (target == null) return;
+        Vector3 dir = target.position - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude > 0.01f)
         {
-            animator.SetBool(isGroundedBoolName, value);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(dir),
+                Time.deltaTime * 8f
+            );
         }
+    }
+
+    // ── Attack Routines ──────────────────────────────────────
+    private IEnumerator PerformRandomAttack()
+    {
+        attackOnCooldown = true;
+        groundState      = GroundedState.Attacking;
+        isAttacking      = true;
+
+        // Pick attack 1-3, avoid repeating
+        int index;
+        do { index = Random.Range(1, 4); } while (index == lastAttackIndex);
+        lastAttackIndex = index;
+
+        SetAnimInt(attackIndexParam, index);
+
+        float duration = index == 1 ? slashDuration
+                       : index == 2 ? punchDuration
+                       :              comboDuration;
+
+        if (index == 2)
+            StartCoroutine(EnablePunchCollider(duration));
+
+        yield return new WaitForSeconds(duration);
+
+        // Reset
+        SetAnimInt(attackIndexParam, 0);
+        isAttacking = false;
+        groundState = GroundedState.Idle;
+
+        yield return new WaitForSeconds(attackCooldown);
+        attackOnCooldown = false;
+    }
+
+    private IEnumerator EnablePunchCollider(float attackDuration)
+    {
+        yield return new WaitForSeconds(attackDuration * 0.3f);
+        if (hand2Collider != null) hand2Collider.enabled = true;
+
+        yield return new WaitForSeconds(attackDuration * 0.4f);
+        if (hand2Collider != null) hand2Collider.enabled = false;
+    }
+
+    // ── Animator Helpers ────────────────────────────────────
+    private void SetAnimBool(string param, bool value)
+    {
+        if (animator != null) animator.SetBool(param, value);
+    }
+
+    private void SetAnimInt(string param, int value)
+    {
+        if (animator != null) animator.SetInteger(param, value);
     }
 }
