@@ -1,27 +1,27 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 /// <summary>
-/// Full Boss AI with multiple phases and attacks.
+/// Full Boss AI — NO NavMesh required. Uses Rigidbody movement (wall collisions work).
 /// ANIMATOR PARAMETERS REQUIRED:
 ///   isGrounded  (Bool)   — false = Levitate Idle, true = grounded
 ///   isRunning   (Bool)   — true = Running
 ///   attackIndex (Int)    — 0=none, 1=Slash, 2=Punch, 3=Combo
 /// </summary>
-[RequireComponent(typeof(NavMeshAgent))]
 public class BossEnemy : Enemy
 {
+    // Rigidbody cached reference
+    private Rigidbody rb;
+
     [Header("Boss – Detection")]
     public float detectionRange = 18f;
 
     [Header("Boss – Combat")]
-    public float attackRange    = 5f;
-    public float chaseRange     = 20f;
+    public float attackRange    = 8f;
+    public float chaseRange     = 22f;
 
     [Header("Boss – Movement")]
-    public float chaseSpeed     = 5f;
-    public float stopDistance   = 2.5f;
+    public float chaseSpeed     = 4f;
 
     [Header("Boss – Landing")]
     public float landingDelay   = 1.25f;
@@ -33,7 +33,7 @@ public class BossEnemy : Enemy
     public float attackCooldown = 2f;
 
     [Header("Boss – Hand2 Punch Collider")]
-    [Tooltip("Drag the hand2 bone's Collider here. Must be a Trigger.")]
+    [Tooltip("Drag the hand2 bone Collider here. Must be a Trigger.")]
     public Collider hand2Collider;
     public int punchDamage = 2;
 
@@ -42,32 +42,33 @@ public class BossEnemy : Enemy
     public string isRunningParam   = "isRunning";
     public string attackIndexParam = "attackIndex";
 
-    // ── Internal State ─────────────────────────────────────
+    // ── Internal State ──────────────────────────────────────
     private enum BossPhase { Levitating, Landing, Grounded }
     private enum GroundedState { Idle, Chasing, Attacking }
 
-    private BossPhase     phase        = BossPhase.Levitating;
-    private GroundedState groundState  = GroundedState.Idle;
+    private BossPhase     phase       = BossPhase.Levitating;
+    private GroundedState groundState = GroundedState.Idle;
 
-    private NavMeshAgent agent;
     private bool attackOnCooldown = false;
     private int  lastAttackIndex  = 0;
-    private bool landingStarted   = false;   // ← FIX: prevent multiple coroutine starts
+    private bool landingStarted   = false;
 
-    // ── Setup ──────────────────────────────────────────────
+    // ── Setup ───────────────────────────────────────────────
     protected override void Setup()
     {
         base.Setup();
-        canMove = false;
+        canMove = false; // we handle movement ourselves
 
-        agent = GetComponent<NavMeshAgent>();
-        if (agent != null)
+        // Cache Rigidbody — add one if missing
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            agent.speed           = chaseSpeed;
-            agent.stoppingDistance = stopDistance;
-            agent.updateRotation  = false;
-            agent.isStopped       = true;
+            rb = gameObject.AddComponent<Rigidbody>();
+            Debug.Log("[BossEnemy] Added Rigidbody automatically.");
         }
+        rb.freezeRotation = true;   // stop physics from tipping boss over
+        rb.useGravity     = false;  // animation/root motion handles Y
+        rb.isKinematic    = true;   // we drive movement, collisions still work
 
         // Auto-configure hand2 collider for punch damage
         if (hand2Collider != null)
@@ -81,13 +82,12 @@ public class BossEnemy : Enemy
             hand2Collider.enabled      = false;
         }
 
-        // Start in levitating state
         SetAnimBool(isGroundedParam,  false);
         SetAnimBool(isRunningParam,   false);
         SetAnimInt (attackIndexParam, 0);
     }
 
-    // ── Movement (called every FixedUpdate by base class) ──
+    // ── Movement ────────────────────────────────────────────
     protected override void HandleMovement()
     {
         if (target == null) return;
@@ -96,11 +96,8 @@ public class BossEnemy : Enemy
 
         switch (phase)
         {
-            // ─── LEVITATING ───────────────────────────────
             case BossPhase.Levitating:
-                StopAgent();
                 FaceTarget();
-                // Only start landing ONCE
                 if (!landingStarted && dist <= detectionRange)
                 {
                     landingStarted = true;
@@ -108,53 +105,47 @@ public class BossEnemy : Enemy
                 }
                 break;
 
-            // ─── LANDING ─────────────────────────────────
             case BossPhase.Landing:
-                StopAgent();
-                FaceTarget();
+                // wait for coroutine
                 break;
 
-            // ─── GROUNDED ────────────────────────────────
             case BossPhase.Grounded:
-                // Escaped completely → return to sky
+                // Player ran too far → go back to sky
                 if (dist > chaseRange)
                 {
                     ReturnToLevitating();
                     break;
                 }
 
-                // Don't move while attacking
                 if (groundState == GroundedState.Attacking)
                 {
-                    StopAgent();
                     FaceTarget();
                     break;
                 }
 
                 if (dist <= attackRange)
                 {
-                    // In attack range → stop and prepare to attack
-                    StopAgent();
-                    FaceTarget();
+                    // In range → stop chasing, prepare to attack
                     SetAnimBool(isRunningParam, false);
                     groundState = GroundedState.Idle;
+                    FaceTarget();
                 }
                 else
                 {
-                    // Player fled → chase
-                    ChasePlayer();
+                    // Chase the player directly
+                    MoveTowardPlayer();
                 }
                 break;
         }
     }
 
-    // ── Actions (called every FixedUpdate by base class) ───
+    // ── Actions ─────────────────────────────────────────────
     protected override void HandleActions()
     {
-        if (target == null)                            return;
-        if (phase != BossPhase.Grounded)               return;
-        if (groundState == GroundedState.Attacking)    return;
-        if (attackOnCooldown)                          return;
+        if (target == null)                         return;
+        if (phase != BossPhase.Grounded)            return;
+        if (groundState == GroundedState.Attacking) return;
+        if (attackOnCooldown)                       return;
 
         float dist = Vector3.Distance(transform.position, target.position);
         if (dist <= attackRange)
@@ -163,13 +154,13 @@ public class BossEnemy : Enemy
         }
     }
 
-    // ── Phase Routines ──────────────────────────────────────
+    // ── Phase Transitions ───────────────────────────────────
     private IEnumerator LandRoutine()
     {
         phase = BossPhase.Landing;
-        SetAnimBool(isGroundedParam, true);            // triggers jump anim
-        yield return new WaitForSeconds(landingDelay); // wait for jump to finish
-        phase      = BossPhase.Grounded;
+        SetAnimBool(isGroundedParam, true);
+        yield return new WaitForSeconds(landingDelay);
+        phase       = BossPhase.Grounded;
         groundState = GroundedState.Idle;
     }
 
@@ -180,9 +171,8 @@ public class BossEnemy : Enemy
         groundState      = GroundedState.Idle;
         attackOnCooldown = false;
         isAttacking      = false;
-        landingStarted   = false;   // allow landing again next time
+        landingStarted   = false;
 
-        StopAgent();
         SetAnimBool(isGroundedParam,  false);
         SetAnimBool(isRunningParam,   false);
         SetAnimInt (attackIndexParam, 0);
@@ -190,22 +180,29 @@ public class BossEnemy : Enemy
         if (hand2Collider != null) hand2Collider.enabled = false;
     }
 
-    // ── Movement Helpers ────────────────────────────────────
-    private void ChasePlayer()
+    // ── Movement Helper ─────────────────────────────────────
+    private void MoveTowardPlayer()
     {
-        if (agent == null || target == null) return;
+        if (target == null) return;
+
         groundState = GroundedState.Chasing;
         SetAnimBool(isRunningParam, true);
-        agent.isStopped = false;
-        agent.SetDestination(target.position);
-        FaceTarget();
-    }
 
-    private void StopAgent()
-    {
-        if (agent == null) return;
-        agent.isStopped = true;
-        agent.velocity  = Vector3.zero;
+        // Move toward player on XZ plane using Rigidbody (respects colliders/walls)
+        Vector3 direction = (target.position - transform.position);
+        direction.y = 0f;
+        direction.Normalize();
+
+        Vector3 newPos = rb != null
+            ? rb.position + direction * chaseSpeed * Time.fixedDeltaTime
+            : transform.position + direction * chaseSpeed * Time.fixedDeltaTime;
+
+        if (rb != null)
+            rb.MovePosition(newPos);
+        else
+            transform.position = newPos;
+
+        FaceTarget();
     }
 
     private void FaceTarget()
@@ -223,14 +220,13 @@ public class BossEnemy : Enemy
         }
     }
 
-    // ── Attack Routines ──────────────────────────────────────
+    // ── Attack Routines ─────────────────────────────────────
     private IEnumerator PerformRandomAttack()
     {
         attackOnCooldown = true;
         groundState      = GroundedState.Attacking;
         isAttacking      = true;
 
-        // Pick attack 1-3, avoid repeating
         int index;
         do { index = Random.Range(1, 4); } while (index == lastAttackIndex);
         lastAttackIndex = index;
@@ -246,7 +242,6 @@ public class BossEnemy : Enemy
 
         yield return new WaitForSeconds(duration);
 
-        // Reset
         SetAnimInt(attackIndexParam, 0);
         isAttacking = false;
         groundState = GroundedState.Idle;
