@@ -67,8 +67,8 @@ public class BossEnemy : Enemy
             Debug.Log("[BossEnemy] Added Rigidbody automatically.");
         }
         rb.freezeRotation = true;   // stop physics from tipping boss over
-        rb.useGravity     = false;  // animation/root motion handles Y
-        rb.isKinematic    = true;   // we drive movement, collisions still work
+        rb.useGravity     = true;   // use gravity so it stays on the floor naturally
+        rb.isKinematic    = false;  // must be false so it doesn't pass through walls
 
         // Auto-configure hand2 collider for punch damage
         if (hand2Collider != null)
@@ -119,6 +119,7 @@ public class BossEnemy : Enemy
 
                 if (groundState == GroundedState.Attacking)
                 {
+                    StopMoving();
                     FaceTarget();
                     break;
                 }
@@ -128,6 +129,7 @@ public class BossEnemy : Enemy
                     // In range → stop chasing, prepare to attack
                     SetAnimBool(isRunningParam, false);
                     groundState = GroundedState.Idle;
+                    StopMoving();
                     FaceTarget();
                 }
                 else
@@ -136,6 +138,14 @@ public class BossEnemy : Enemy
                     MoveTowardPlayer();
                 }
                 break;
+        }
+    }
+
+    private void StopMoving()
+    {
+        if (rb != null)
+        {
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
     }
 
@@ -188,19 +198,20 @@ public class BossEnemy : Enemy
         groundState = GroundedState.Chasing;
         SetAnimBool(isRunningParam, true);
 
-        // Move toward player on XZ plane using Rigidbody (respects colliders/walls)
+        // Move toward player on XZ plane using Rigidbody velocity (best for wall collisions)
         Vector3 direction = (target.position - transform.position);
         direction.y = 0f;
         direction.Normalize();
 
-        Vector3 newPos = rb != null
-            ? rb.position + direction * chaseSpeed * Time.fixedDeltaTime
-            : transform.position + direction * chaseSpeed * Time.fixedDeltaTime;
-
         if (rb != null)
-            rb.MovePosition(newPos);
+        {
+            // Keep current Y velocity (gravity), change XZ velocity to chase
+            rb.velocity = new Vector3(direction.x * chaseSpeed, rb.velocity.y, direction.z * chaseSpeed);
+        }
         else
-            transform.position = newPos;
+        {
+            transform.position += direction * chaseSpeed * Time.fixedDeltaTime;
+        }
 
         FaceTarget();
     }
@@ -226,6 +237,7 @@ public class BossEnemy : Enemy
         attackOnCooldown = true;
         groundState      = GroundedState.Attacking;
         isAttacking      = true;
+        StopMoving();
 
         int index;
         do { index = Random.Range(1, 4); } while (index == lastAttackIndex);

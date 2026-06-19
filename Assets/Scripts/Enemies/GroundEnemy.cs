@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +17,14 @@ public class GroundEnemy : Enemy
     public bool lineOfSightToStop = true;
     [Tooltip("Whether this enemy should always face the player, or face in the direction it is moving")]
     public bool alwaysFacePlayer = true;
+
+    [Header("Physics Hover Settings (used when NavMesh Agent is removed)")]
+    [Tooltip("Height above the ground this enemy hovers at when using physics movement")]
+    public float hoverHeight = 3.0f;
+    [Tooltip("How strongly the hover corrects the height — higher = snappier")]
+    public float hoverStrength = 8.0f;
+    [Tooltip("How much the hover dampens vertical movement to prevent bouncing")]
+    public float hoverDamping = 4.0f;
 
     /// <summary>
     /// Description:
@@ -52,7 +60,10 @@ public class GroundEnemy : Enemy
     /// <param name="timeToSpend">The time to spend trying to get to that target</param>
     public void GoToTarget(Vector3 target, float timeToSpend)
     {
-        agent.SetDestination(target);
+        if (agent != null)
+        {
+            agent.SetDestination(target);
+        }
         travelingToSpecificTarget = true;
         timeToStopTrying = Time.time + timeToSpend;
     }
@@ -73,31 +84,90 @@ public class GroundEnemy : Enemy
     {
         if (enemyRigidbody != null)
         {
-            enemyRigidbody.velocity = Vector3.zero;
+            enemyRigidbody.velocity = new Vector3(0, enemyRigidbody.velocity.y, 0);
             enemyRigidbody.angularVelocity = Vector3.zero;
         }
 
-        if (ShouldMove())
+        // Always face player when no NavMesh agent (physics-based movement)
+        bool shouldFaceTarget = ShouldMove() || alwaysFacePlayer || (agent == null && target != null);
+        if (shouldFaceTarget && target != null)
         {
             Quaternion desiredRotation = CalculateDesiredRotation();
-            transform.rotation = desiredRotation;
+            if (enemyRigidbody != null)
+            {
+                // Use MoveRotation so physics constraints are respected properly
+                enemyRigidbody.MoveRotation(desiredRotation);
+            }
+            else
+            {
+                transform.rotation = desiredRotation;
+            }
         }
         
         if (travelingToSpecificTarget)
         {
-            if (Time.time >= timeToStopTrying || NavMeshAgentDestinationReached())
+            if (Time.time >= timeToStopTrying || (agent != null && NavMeshAgentDestinationReached()))
             {
                 travelingToSpecificTarget = false;
-                agent.SetDestination(target.position);
+                if (agent != null) agent.SetDestination(target.position);
             }
         }
         else if (ShouldMove())
         {
-            agent.SetDestination(target.position);
+            if (agent != null) 
+            {
+                agent.SetDestination(target.position);
+            }
+            else 
+            {
+                // --- FLYING / HOVER MOVEMENT (no NavMesh) ---
+                // This mode makes the enemy hover at a fixed height above the ground
+                // and fly directly toward the player, clearing stairs and walls.
+
+                Vector3 desiredDir = (target.position - transform.position);
+                desiredDir.y = 0;
+                desiredDir.Normalize();
+
+                if (enemyRigidbody != null)
+                {
+                    // --- Hover height correction ---
+                    // Raycast straight down to find the ground below
+                    RaycastHit groundHit;
+                    int enemyLayer = gameObject.layer;
+                    int groundMask = ~(1 << enemyLayer);
+                    float currentGroundY = transform.position.y; // fallback
+                    if (Physics.Raycast(transform.position, Vector3.down, out groundHit, 20f, groundMask))
+                    {
+                        currentGroundY = groundHit.point.y;
+                    }
+
+                    float targetY = currentGroundY + hoverHeight;
+                    float yError = targetY - transform.position.y;
+                    // Spring-damper for smooth hover
+                    float yVelocity = enemyRigidbody.velocity.y;
+                    float hoverForce = (yError * hoverStrength) - (yVelocity * hoverDamping);
+
+                    // Cancel gravity effect and apply our own hover
+                    hoverForce += Mathf.Abs(Physics.gravity.y); // counteract gravity
+
+                    // --- Horizontal movement toward player ---
+                    Vector3 horizontalVelocity = desiredDir * moveSpeed;
+
+                    enemyRigidbody.velocity = new Vector3(
+                        horizontalVelocity.x,
+                        enemyRigidbody.velocity.y + hoverForce * Time.fixedDeltaTime,
+                        horizontalVelocity.z
+                    );
+                }
+                else
+                {
+                    transform.position += desiredDir * moveSpeed * Time.deltaTime;
+                }
+            }
         }
         else if (agent != null)
         {
-            agent.SetDestination(transform.position);
+            if (agent.isOnNavMesh) agent.SetDestination(transform.position);
         }
     }
 
@@ -112,6 +182,8 @@ public class GroundEnemy : Enemy
     /// <returns>bool: Whether or not the agent has reached its destination</returns>
     bool NavMeshAgentDestinationReached()
     {
+        if (agent == null) return true;
+
         // Check if we've reached the destination
         if (!agent.pathPending)
         {
@@ -148,7 +220,7 @@ public class GroundEnemy : Enemy
             hasLineOfSight = HasLineOfSight();
         }
 
-        if (agent != null && target != null && canMove && attackMove && hasLineOfSight && (target.position - transform.position).magnitude < maximumMoveRange)
+        if (target != null && canMove && attackMove && hasLineOfSight && (target.position - transform.position).magnitude < maximumMoveRange)
         {
             if ((target.position - transform.position).magnitude > stopDistance)
             {
@@ -205,11 +277,15 @@ public class GroundEnemy : Enemy
     {
         if (target != null)
         {
-            if (alwaysFacePlayer)
+            if (alwaysFacePlayer || agent == null)
             {
-                Quaternion result = Quaternion.LookRotation(target.position - transform.position, transform.up);
-                result = Quaternion.Euler(0, result.eulerAngles.y, 0);
-                return result;
+                Vector3 lookDirection = target.position - transform.position;
+                lookDirection.y = 0;
+                if (lookDirection != Vector3.zero)
+                {
+                    Quaternion result = Quaternion.LookRotation(lookDirection, transform.up);
+                    return result;
+                }
             }
         }
         return base.CalculateDesiredRotation();
