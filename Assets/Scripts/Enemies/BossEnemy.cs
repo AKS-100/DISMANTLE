@@ -70,9 +70,19 @@ public class BossEnemy : Enemy
         rb.useGravity     = true;   // use gravity so it stays on the floor naturally
         rb.isKinematic    = false;  // must be false so it doesn't pass through walls
 
+        // Auto-configure contact damage on the boss itself (when player touches the boss body)
+        Damage contactDamage = GetComponent<Damage>();
+        if (contactDamage == null) contactDamage = gameObject.AddComponent<Damage>();
+        contactDamage.teamId                   = 1;
+        contactDamage.damageAmount             = 1;
+        contactDamage.destroyAfterDamage       = false;
+        contactDamage.dealDamageOnCollision    = true;
+        contactDamage.dealDamageOnTriggerEnter = true;
+
         // Auto-configure hand2 collider for punch damage
         if (hand2Collider != null)
         {
+            hand2Collider.isTrigger = true;
             Damage d = hand2Collider.GetComponent<Damage>();
             if (d == null) d = hand2Collider.gameObject.AddComponent<Damage>();
             d.teamId                   = 1;
@@ -80,6 +90,26 @@ public class BossEnemy : Enemy
             d.destroyAfterDamage       = false;
             d.dealDamageOnTriggerEnter = true;
             hand2Collider.enabled      = false;
+        }
+
+        // Auto-configure weapon colliders in EnemyAttackerMelee (e.g. hand1)
+        EnemyAttackerMelee meleeAttacker = attacker as EnemyAttackerMelee;
+        if (meleeAttacker != null && meleeAttacker.weaponColliders != null)
+        {
+            foreach (Collider c in meleeAttacker.weaponColliders)
+            {
+                if (c != null)
+                {
+                    c.isTrigger = true;
+                    Damage d = c.GetComponent<Damage>();
+                    if (d == null) d = c.gameObject.AddComponent<Damage>();
+                    d.teamId                   = 1;
+                    d.damageAmount             = punchDamage;
+                    d.destroyAfterDamage       = false;
+                    d.dealDamageOnTriggerEnter = true;
+                    c.enabled                  = false;
+                }
+            }
         }
 
         SetAnimBool(isGroundedParam,  false);
@@ -249,8 +279,8 @@ public class BossEnemy : Enemy
                        : index == 2 ? punchDuration
                        :              comboDuration;
 
-        if (index == 2)
-            StartCoroutine(EnablePunchCollider(duration));
+        // Enable boss melee colliders for all attack phases
+        StartCoroutine(EnableMeleeColliders(duration));
 
         yield return new WaitForSeconds(duration);
 
@@ -262,13 +292,33 @@ public class BossEnemy : Enemy
         attackOnCooldown = false;
     }
 
-    private IEnumerator EnablePunchCollider(float attackDuration)
+    private IEnumerator EnableMeleeColliders(float attackDuration)
     {
         yield return new WaitForSeconds(attackDuration * 0.3f);
-        if (hand2Collider != null) hand2Collider.enabled = true;
+        SetBossColliders(true);
 
         yield return new WaitForSeconds(attackDuration * 0.4f);
-        if (hand2Collider != null) hand2Collider.enabled = false;
+        SetBossColliders(false);
+    }
+
+    private void SetBossColliders(bool active)
+    {
+        if (hand2Collider != null)
+        {
+            hand2Collider.enabled = active;
+        }
+
+        EnemyAttackerMelee meleeAttacker = attacker as EnemyAttackerMelee;
+        if (meleeAttacker != null && meleeAttacker.weaponColliders != null)
+        {
+            foreach (Collider c in meleeAttacker.weaponColliders)
+            {
+                if (c != null)
+                {
+                    c.enabled = active;
+                }
+            }
+        }
     }
 
     // ── Animator Helpers ────────────────────────────────────

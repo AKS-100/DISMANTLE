@@ -20457,6 +20457,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9221238154057903900, guid: 4041021e963d13f42825472ff8918b10,
+        type: 3}
+      propertyPath: useAmmo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9221238154057903900, guid: 4041021e963d13f42825472ff8918b10,
+        type: 3}
+      propertyPath: ammunitionID
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9221238154057903900, guid: 4041021e963d13f42825472ff8918b10,
+        type: 3}
+      propertyPath: magazineSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9221238154057903900, guid: 4041021e963d13f42825472ff8918b10,
+        type: 3}
+      propertyPath: roundsLoaded
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -22037,8 +22057,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.20158304, y: 0.4283507, z: 0.1925974}
-  m_Center: {x: -0.045838866, y: 0.0030954177, z: -0.042482834}
+  m_Size: {x: 0.45642138, y: 0.73372936, z: 0.3746405}
+  m_Center: {x: -0.09989005, y: -0.14959346, z: -0.078561105}
 --- !u!1 &1049385603 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7488349437554457229, guid: 7f484d75cc55fd64a86081dbe3b80a3f,
@@ -22100,8 +22120,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.20158304, y: 0.4283507, z: 0.1925974}
-  m_Center: {x: -0.02, y: 0.0030954177, z: -0.042482834}
+  m_Size: {x: 0.37174764, y: 0.8965359, z: 0.4752869}
+  m_Center: {x: 0.065082535, y: -0.02799457, z: 0.03149071}
 --- !u!1001 &1051526337
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29511,12 +29531,27 @@ PrefabInstance:
     - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
       propertyPath: startingAmmoList.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
       propertyPath: startingAmmoList.Array.data[0].amount
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
+        type: 3}
+      propertyPath: startingAmmoList.Array.data[1].amount
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
+        type: 3}
+      propertyPath: startingAmmoList.Array.data[0].ammunitionID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
+        type: 3}
+      propertyPath: startingAmmoList.Array.data[1].ammunitionID
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5257030302506519708, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
@@ -30765,7 +30800,7 @@ PrefabInstance:
     - target: {fileID: 1740199357721361812, guid: 3061d8071cd6bdb46b2fca0cef86e613,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.863327
+      value: -9.62
       objectReference: {fileID: 0}
     - target: {fileID: 1740199357721361812, guid: 3061d8071cd6bdb46b2fca0cef86e613,
         type: 3}
@@ -30775,7 +30810,7 @@ PrefabInstance:
     - target: {fileID: 1740199357721361812, guid: 3061d8071cd6bdb46b2fca0cef86e613,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.07495165
+      value: -0.94
       objectReference: {fileID: 0}
     - target: {fileID: 1740199357721361812, guid: 3061d8071cd6bdb46b2fca0cef86e613,
         type: 3}
@@ -35621,6 +35656,7 @@ MonoBehaviour:
   attackClip: {fileID: 0}
   weaponColliders:
   - {fileID: 1049385602}
+  - {fileID: 1049385606}
 --- !u!114 &1724031993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35702,9 +35738,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamId: 1
-  defaultHealth: 20
-  maximumHealth: 20
-  currentHealth: 20
+  defaultHealth: 30
+  maximumHealth: 30
+  currentHealth: 30
   invincibilityTime: 0.5
   isAlwaysInvincible: 0
   useLives: 0
