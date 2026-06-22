@@ -36,6 +36,8 @@ public class BossEnemy : Enemy
     [Tooltip("Drag the hand2 bone Collider here. Must be a Trigger.")]
     public Collider hand2Collider;
     public int punchDamage = 2;
+    [Tooltip("How much to scale up the hand/weapon hitboxes (colliders) so they hit the player reliably.")]
+    public float hitboxScaleMultiplier = 3.0f;
 
     [Header("Boss – Animator Parameter Names")]
     public string isGroundedParam  = "isGrounded";
@@ -83,6 +85,7 @@ public class BossEnemy : Enemy
         if (hand2Collider != null)
         {
             hand2Collider.isTrigger = true;
+            ScaleCollider(hand2Collider, hitboxScaleMultiplier);
             Damage d = hand2Collider.GetComponent<Damage>();
             if (d == null) d = hand2Collider.gameObject.AddComponent<Damage>();
             d.teamId                   = 1;
@@ -101,6 +104,7 @@ public class BossEnemy : Enemy
                 if (c != null)
                 {
                     c.isTrigger = true;
+                    ScaleCollider(c, hitboxScaleMultiplier);
                     Damage d = c.GetComponent<Damage>();
                     if (d == null) d = c.gameObject.AddComponent<Damage>();
                     d.teamId                   = 1;
@@ -330,5 +334,23 @@ public class BossEnemy : Enemy
     private void SetAnimInt(string param, int value)
     {
         if (animator != null) animator.SetInteger(param, value);
+    }
+
+    private void ScaleCollider(Collider c, float multiplier)
+    {
+        if (c == null) return;
+        if (c is BoxCollider box)
+        {
+            box.size *= multiplier;
+        }
+        else if (c is SphereCollider sphere)
+        {
+            sphere.radius *= multiplier;
+        }
+        else if (c is CapsuleCollider capsule)
+        {
+            capsule.radius *= multiplier;
+            capsule.height *= multiplier;
+        }
     }
 }
