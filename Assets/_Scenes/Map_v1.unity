@@ -5753,7 +5753,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: c7dc5cb3903ef6f41955767b516c7ab3, type: 3}
+      objectReference: {fileID: 8300000, guid: a3b9f3106d714a5428593902b5ab1979, type: 3}
     - target: {fileID: 8065442381843420977, guid: 8f7fe385e080f214c81e5f24700d9c88,
         type: 3}
       propertyPath: m_IsActive
@@ -6211,6 +6211,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1598700383}
+    - targetCorrespondingSourceObject: {fileID: 8828291615870176800, guid: 8f7fe385e080f214c81e5f24700d9c88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1274567747}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3182090365054615853, guid: 8f7fe385e080f214c81e5f24700d9c88,
         type: 3}
@@ -29432,6 +29436,59 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1268192267}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1274567746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1274567747}
+  - component: {fileID: 1274567748}
+  m_Layer: 5
+  m_Name: MusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1274567747
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274567746}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2050051887}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1274567748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274567746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a504799d41ceea04ebf47b353c668a2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalBGM: {fileID: 8300000, guid: abda68e9fa0712643a88389b6dcdc94e, type: 3}
+  bossBGM: {fileID: 8300000, guid: 1ddac3e5a15b94a44bfb8556d4a44cd2, type: 3}
+  fadeDuration: 1
+  maxVolume: 1
+  maxBossVolume: 1
 --- !u!1001 &1276107878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43087,6 +43144,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4000013041734426, guid: d803e729730d97a4e89edf13b602b3f4,
     type: 3}
   m_PrefabInstance: {fileID: 2049012702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2050051887 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8828291615870176800, guid: 8f7fe385e080f214c81e5f24700d9c88,
+    type: 3}
+  m_PrefabInstance: {fileID: 189569531}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2061022140
 PrefabInstance:

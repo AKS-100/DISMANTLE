@@ -119,6 +119,13 @@ public class BossEnemy : Enemy
         SetAnimBool(isGroundedParam,  false);
         SetAnimBool(isRunningParam,   false);
         SetAnimInt (attackIndexParam, 0);
+
+        // Subscribe to death events to reset BGM
+        Health health = GetComponent<Health>();
+        if (health != null)
+        {
+            health.eventsOnDeath.AddListener(OnBossDeath);
+        }
     }
 
     // ── Movement ────────────────────────────────────────────
@@ -203,6 +210,12 @@ public class BossEnemy : Enemy
     {
         phase = BossPhase.Landing;
         SetAnimBool(isGroundedParam, true);
+
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.PlayBossBGM();
+        }
+
         yield return new WaitForSeconds(landingDelay);
         phase       = BossPhase.Grounded;
         groundState = GroundedState.Idle;
@@ -222,6 +235,11 @@ public class BossEnemy : Enemy
         SetAnimInt (attackIndexParam, 0);
 
         if (hand2Collider != null) hand2Collider.enabled = false;
+
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.PlayNormalBGM();
+        }
     }
 
     // ── Movement Helper ─────────────────────────────────────
@@ -351,6 +369,23 @@ public class BossEnemy : Enemy
         {
             capsule.radius *= multiplier;
             capsule.height *= multiplier;
+        }
+    }
+
+    private void OnBossDeath()
+    {
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.PlayNormalBGM();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        Health health = GetComponent<Health>();
+        if (health != null)
+        {
+            health.eventsOnDeath.RemoveListener(OnBossDeath);
         }
     }
 }
