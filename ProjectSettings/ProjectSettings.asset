@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: BEE Studios
+  companyName: BEE
   productName: Dismantle
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -153,7 +153,7 @@ PlayerSettings:
   isWsaHolographicRemotingEnabled: 0
   enableFrameTimingStats: 0
   enableOpenGLProfilerGPURecorders: 1
-  allowHDRDisplaySupport: 0
+  allowHDRDisplaySupport: 1
   useHDRDisplay: 0
   hdrBitDepth: 0
   m_ColorGamuts: 00000000
@@ -289,7 +289,14 @@ PlayerSettings:
   AndroidMinifyDebug: 0
   AndroidValidateAppBundleSize: 1
   AndroidAppBundleSizeToValidate: 150
-  m_BuildTargetIcons: []
+  m_BuildTargetIcons:
+  - m_BuildTarget: 
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 11142765de05b2f40b9258236c063514, type: 3}
+      m_Width: 128
+      m_Height: 128
+      m_Kind: 0
   m_BuildTargetPlatformIcons:
   - m_BuildTarget: iPhone
     m_Icons:
