@@ -1631,7 +1631,7 @@ PrefabInstance:
     - target: {fileID: 6119803728855701006, guid: 1d342cf8b8aea7840ae58f016e405dc8,
         type: 3}
       propertyPath: m_text
-      value: <b><size=160%>C</size>HAMBER 16<size=135%></b>
+      value: <b><size=140%>M</size>etal<size=140%> S</size>hatter</b>
       objectReference: {fileID: 0}
     - target: {fileID: 6119803728855701006, guid: 1d342cf8b8aea7840ae58f016e405dc8,
         type: 3}
@@ -1875,7 +1875,7 @@ PrefabInstance:
     - target: {fileID: 6748848558370534265, guid: 1d342cf8b8aea7840ae58f016e405dc8,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 50
+      value: 81
       objectReference: {fileID: 0}
     - target: {fileID: 6748848558370534265, guid: 1d342cf8b8aea7840ae58f016e405dc8,
         type: 3}
@@ -2221,6 +2221,10 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 962936813}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1297810462479210113, guid: 1d342cf8b8aea7840ae58f016e405dc8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1361361775}
     - targetCorrespondingSourceObject: {fileID: 3411299111635322763, guid: 1d342cf8b8aea7840ae58f016e405dc8,
         type: 3}
       insertIndex: -1
@@ -2264,6 +2268,12 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1361361770}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1361361773 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1297810462479210113, guid: 1d342cf8b8aea7840ae58f016e405dc8,
+    type: 3}
+  m_PrefabInstance: {fileID: 1361361770}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1361361774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2276,6 +2286,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09431bb83f16fc24793665fb5f3ea87b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1361361775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361361773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2d3edfe7c055d45b9918a61ddc619f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playEntrance: 1
+  entranceSlideDistance: 60
+  entranceDuration: 0.45
+  entranceDelay: 0.1
+  enableFloat: 0
+  floatAmplitude: 6
+  floatPeriod: 2.2
+  enableGlowPulse: 1
+  baseColour: {r: 0.85, g: 0.08, b: 0.08, a: 1}
+  glowColour: {r: 1, g: 0.28, b: 0.1, a: 1}
+  glowPeriod: 2.8
+  enableFlicker: 1
+  flickerInterval: 2
+  flickerVariance: 2
+  flickerCount: 4
+  flickerPulseDuration: 0.04
+  flickerMinAlpha: 0.05
+  enableSway: 0
+  swayAngle: 0.4
+  swayPeriod: 1.8
 --- !u!224 &1361361777 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1665123591155456819, guid: 1d342cf8b8aea7840ae58f016e405dc8,
