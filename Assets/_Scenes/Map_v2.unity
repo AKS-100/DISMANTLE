@@ -8463,6 +8463,95 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 313293053}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &316486456
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 644087323}
+    m_Modifications:
+    - target: {fileID: 5316357818929849221, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849875, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_Name
+      value: AmmoPickupElectroGun
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 32.256676
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.3882139
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -31.87505
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849885, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: amount
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025496173983849885, guid: 9221727c01cc6f04885c1543a92aea89,
+        type: 3}
+      propertyPath: ammunitionID
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9221727c01cc6f04885c1543a92aea89, type: 3}
+--- !u!4 &316486457 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8025496173983849881, guid: 9221727c01cc6f04885c1543a92aea89,
+    type: 3}
+  m_PrefabInstance: {fileID: 316486456}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &320330394 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6553945175845396803, guid: 4f979e67e5f8f2646a786889f86fef12,
@@ -18454,6 +18543,7 @@ Transform:
   - {fileID: 1707366278}
   - {fileID: 173650871}
   - {fileID: 887539082}
+  - {fileID: 316486457}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &652369298
@@ -30956,7 +31046,12 @@ PrefabInstance:
     - target: {fileID: 5846353965396329244, guid: 4f979e67e5f8f2646a786889f86fef12,
         type: 3}
       propertyPath: useAmmo
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846353965396329244, guid: 4f979e67e5f8f2646a786889f86fef12,
+        type: 3}
+      propertyPath: mustReload
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5846353965396329244, guid: 4f979e67e5f8f2646a786889f86fef12,
         type: 3}
@@ -30968,6 +31063,16 @@ PrefabInstance:
         type: 3}
       propertyPath: ammunitionID
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846353965396329244, guid: 4f979e67e5f8f2646a786889f86fef12,
+        type: 3}
+      propertyPath: magazineSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846353965396329244, guid: 4f979e67e5f8f2646a786889f86fef12,
+        type: 3}
+      propertyPath: roundsLoaded
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6553945175845396803, guid: 4f979e67e5f8f2646a786889f86fef12,
         type: 3}
@@ -36972,7 +37077,7 @@ PrefabInstance:
     - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
       propertyPath: startingAmmoList.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
@@ -36986,6 +37091,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
+      propertyPath: startingAmmoList.Array.data[2].amount
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
+        type: 3}
       propertyPath: startingAmmoList.Array.data[0].ammunitionID
       value: 0
       objectReference: {fileID: 0}
@@ -36993,6 +37103,11 @@ PrefabInstance:
         type: 3}
       propertyPath: startingAmmoList.Array.data[1].ammunitionID
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840485888342845128, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
+        type: 3}
+      propertyPath: startingAmmoList.Array.data[2].ammunitionID
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5257030302506519708, guid: 6e4e63dbb1f362c46aa39acbf75badf3,
         type: 3}
