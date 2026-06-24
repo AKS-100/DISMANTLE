@@ -160,6 +160,13 @@ public class Gun : MonoBehaviour
 
             GunSmokeHandler.OnGunFire(this);
 
+            // ── Visual Juice: crosshair spread + micro camera shake on fire ──
+            DynamicCrosshair.TriggerShootSpread();
+            if (CameraShake.instance != null)
+            {
+                CameraShake.instance.Shake(0.05f, 0.1f); // subtle micro-shake on shoot
+            }
+
             if (useAmmo)
             {
                 AmmoTracker.OnFire(this);

@@ -42,9 +42,11 @@ public class MusicManager : MonoBehaviour
             }
             DontDestroyOnLoad(gameObject);
             InitializeAudioSources();
+            Debug.Log("[MusicManager] Initialized successfully.");
         }
-        else
+        else if (instance != this)
         {
+            Debug.Log("[MusicManager] Duplicate instance destroyed.");
             Destroy(gameObject);
         }
     }
@@ -83,6 +85,7 @@ public class MusicManager : MonoBehaviour
     /// </summary>
     public void PlayNormalBGM()
     {
+        Debug.Log("[MusicManager] PlayNormalBGM called.");
         PlayTrack(normalBGM);
     }
 
@@ -91,6 +94,7 @@ public class MusicManager : MonoBehaviour
     /// </summary>
     public void PlayBossBGM()
     {
+        Debug.Log("[MusicManager] PlayBossBGM called.");
         PlayTrack(bossBGM);
     }
 
@@ -99,10 +103,20 @@ public class MusicManager : MonoBehaviour
     /// </summary>
     private void PlayTrack(AudioClip clip)
     {
-        if (clip == null) return;
+        if (clip == null)
+        {
+            Debug.LogWarning("[MusicManager] PlayTrack called with null clip!");
+            return;
+        }
+
+        Debug.Log($"[MusicManager] PlayTrack requested for clip: {clip.name}. Current active source playing: {activeSource.isPlaying}");
 
         // If the track is already playing on the active source, do nothing
-        if (activeSource.isPlaying && activeSource.clip == clip) return;
+        if (activeSource.isPlaying && activeSource.clip == clip)
+        {
+            Debug.Log("[MusicManager] Clip is already playing. Ignoring request.");
+            return;
+        }
 
         // Determine the inactive source to fade in
         AudioSource newSource = (activeSource == sourceA) ? sourceB : sourceA;
@@ -116,6 +130,13 @@ public class MusicManager : MonoBehaviour
         }
 
         float targetVolume = (clip == bossBGM) ? maxBossVolume : maxVolume;
+        if (targetVolume <= 0.01f)
+        {
+            Debug.LogWarning($"[MusicManager] targetVolume for {clip.name} is {targetVolume}. Overriding to default to ensure it's audible!");
+            targetVolume = (clip == bossBGM) ? 0.8f : 0.5f;
+        }
+
+        Debug.Log($"[MusicManager] Crossfading to {clip.name} with targetVolume: {targetVolume}");
         fadeCoroutine = StartCoroutine(CrossFadeRoutine(activeSource, newSource, targetVolume, fadeDuration));
         activeSource = newSource;
     }

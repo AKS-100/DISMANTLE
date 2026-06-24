@@ -6228,6 +6228,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 540566289}
+    - targetCorrespondingSourceObject: {fileID: 1863822620364884436, guid: 8f7fe385e080f214c81e5f24700d9c88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1485914961}
   m_SourcePrefab: {fileID: 100100000, guid: 8f7fe385e080f214c81e5f24700d9c88, type: 3}
 --- !u!4 &189569532 stripped
 Transform:
@@ -13485,6 +13489,27 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &599498084 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5180106624432021995, guid: 4f979e67e5f8f2646a786889f86fef12,
+    type: 3}
+  m_PrefabInstance: {fileID: 1164143852}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &599498090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599498084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 389e88270fc0d184391adac1f3d6a888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultIntensity: 0.15
+  defaultDuration: 0.2
+  dampingSpeed: 8
 --- !u!1001 &604887102
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20665,6 +20690,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 894038969}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &895940799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7174028061846801580, guid: 8f7fe385e080f214c81e5f24700d9c88,
+    type: 3}
+  m_PrefabInstance: {fileID: 189569531}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &903062609
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26100,7 +26137,11 @@ PrefabInstance:
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 672266427}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5180106624432021995, guid: 4f979e67e5f8f2646a786889f86fef12,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 599498090}
   m_SourcePrefab: {fileID: 100100000, guid: 4f979e67e5f8f2646a786889f86fef12, type: 3}
 --- !u!1001 &1167641614
 PrefabInstance:
@@ -30338,6 +30379,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1344908834}
   - component: {fileID: 1344908833}
+  - component: {fileID: 1344908835}
   m_Layer: 0
   m_Name: PostProcessVolume
   m_TagString: Untagged
@@ -30377,6 +30419,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1344908835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344908832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85863265e7f42544863c492cc95711a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  postProcessVolume: {fileID: 1344908833}
+  vignetteHealthyIntensity: 0.22
+  vignetteDangerIntensity: 0.65
+  vignetteTransitionSpeed: 2
+  chromaticHitIntensity: 0.8
+  chromaticRecoverySpeed: 5
+  distortionPeakIntensity: -0.35
+  distortionRecoverySpeed: 6
 --- !u!1001 &1348444706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32409,6 +32471,30 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1483622531}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1485914957 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1863822620364884436, guid: 8f7fe385e080f214c81e5f24700d9c88,
+    type: 3}
+  m_PrefabInstance: {fileID: 189569531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1485914961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485914957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad24f9f5e8490a043917c90344365d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayText: {fileID: 895940799}
+  countUpSpeed: 150
+  scorePrefix: 'SCORE: '
+  pulseOnChange: 1
+  pulseScale: 1.25
+  pulseSpeed: 10
 --- !u!1001 &1490698763
 PrefabInstance:
   m_ObjectHideFlags: 0

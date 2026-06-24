@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -69,7 +69,7 @@ public class Health : MonoBehaviour
     }
 
     private float respawnTime;
-    
+
     /// <summary>
     /// Description:
     /// Checks to see if the health gameobject should be respawned yet and only respawns it if the alloted time has passed
@@ -89,7 +89,7 @@ public class Health : MonoBehaviour
         }
     }
 
-    // The specific game time when the health can be damged again
+    // The specific game time when the health can be damaged again
     private float timeToBecomeDamagableAgain = 0;
     // Whether or not the health is invincible
     private bool isInvincableFromDamage = false;
@@ -113,6 +113,7 @@ public class Health : MonoBehaviour
 
     // The position that the health's gameobject will respawn at
     private Vector3 respawnPosition;
+
     /// <summary>
     /// Description:
     /// Changes the respawn position to a new position
@@ -150,7 +151,7 @@ public class Health : MonoBehaviour
         if (gameObject.GetComponent<PlayerController>() != null && gameObject.GetComponent<PlayerController>().playerShooter != null)
         {
             Shooter playerShooter = gameObject.GetComponent<PlayerController>().playerShooter;
-            foreach(Gun gun in playerShooter.guns)
+            foreach (Gun gun in playerShooter.guns)
             {
                 Vector3 rotation = gun.transform.localRotation.eulerAngles;
                 gun.transform.localRotation = Quaternion.Euler(new Vector3(0, rotation.y, rotation.z));
@@ -189,6 +190,13 @@ public class Health : MonoBehaviour
             timeToBecomeDamagableAgain = Time.time + invincibilityTime;
             isInvincableFromDamage = true;
             currentHealth = Mathf.Clamp(currentHealth - damageAmount, 0, maximumHealth);
+
+            // ── Visual Juice: camera shake on damage (player only, teamId == 0) ──
+            if (teamId == 0 && CameraShake.instance != null)
+            {
+                CameraShake.instance.Shake(0.2f, 0.3f);
+            }
+
             GameManager.UpdateUIElements();
             CheckDeath();
         }
@@ -278,7 +286,7 @@ public class Health : MonoBehaviour
     /// </summary>
     void Die()
     {
-        if ((GameManager.instance != null) && (scoreAmount>0))
+        if ((GameManager.instance != null) && (scoreAmount > 0))
         {
             GameManager.AddScore(scoreAmount);
         }
@@ -313,7 +321,7 @@ public class Health : MonoBehaviour
                 else
                 {
                     respawnTime = Time.time + respawnWaitTime;
-                } 
+                }
             }
             else
             {
@@ -331,7 +339,6 @@ public class Health : MonoBehaviour
                 }
                 GameOver();
             }
-            
         }
         else
         {
@@ -344,15 +351,15 @@ public class Health : MonoBehaviour
             {
                 Destructable.DoDestroy(this.gameObject);
             }
-        }      
+        }
     }
 
     /// <summary>
     /// Description:
     /// Tries to notify the game manager that the game is over
-    /// Input: 
+    /// Input:
     /// none
-    /// Return: 
+    /// Return:
     /// void (no return)
     /// </summary>
     public void GameOver()
