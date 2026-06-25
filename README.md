@@ -15,7 +15,11 @@
 
 ---
 
-## 🩸 About the Game
+## 🩸 ScreenShots and About the Game
+<img width="960" height="600" alt="1" src="https://github.com/user-attachments/assets/ef4c4226-a14c-46ca-a26f-84f88122dba9" />
+<img width="960" height="600" alt="2" src="https://github.com/user-attachments/assets/d2196830-5c55-4cdb-bcaf-b97c2bf79ac9" />
+<img width="960" height="600" alt="4" src="https://github.com/user-attachments/assets/b24d7d79-b41b-4ffc-9e71-b3db829952df" />
+<img width="960" height="600" alt="5" src="https://github.com/user-attachments/assets/5096d0ab-41cf-426f-a117-99424339890b" />
 
 **DISMANTLE** is a fast-paced first-person horror shooter set in dark, industrial corridors filled with enemies that want you dead. Armed with multiple weapons, limited ammo, and your survival instincts — fight through waves of ground troops, flying threats, turrets, and a terrifying multi-phase boss.
 
