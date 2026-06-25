@@ -7,7 +7,6 @@
 *Survive. Destroy. Dismantle.*
 
 [![Unity](https://img.shields.io/badge/Unity-2022.3.62f1-black?logo=unity)](https://unity.com/)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Mac%20%7C%20Linux-blue)]()
 [![License](https://img.shields.io/badge/License-MIT-red)]()
 [![Status](https://img.shields.io/badge/Status-In%20Development-orange)]()
 
@@ -15,7 +14,7 @@
 
 ---
 
-## 🩸 ScreenShots and About the Game
+## ScreenShots and About the Game
 <img width="960" height="600" alt="1" src="https://github.com/user-attachments/assets/ef4c4226-a14c-46ca-a26f-84f88122dba9" />
 <img width="960" height="600" alt="2" src="https://github.com/user-attachments/assets/d2196830-5c55-4cdb-bcaf-b97c2bf79ac9" />
 <img width="960" height="600" alt="5" src="https://github.com/user-attachments/assets/5096d0ab-41cf-426f-a117-99424339890b" />
@@ -99,6 +98,12 @@ The game blends **classic retro FPS gameplay** with **modern horror atmosphere**
 | **C#** | All game scripting |
 
 ---
+## ⬇️ Download
+
+| Platform | Download |
+|---|---|
+| Windows | [Download for Windows](https://aks24550s.itch.io/dismantle) |
+| Mac | [Download for Mac](https://aks24550s.itch.io/dismantle) |
 
 ## 📁 Project Structure
 
