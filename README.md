@@ -7,8 +7,7 @@
 *Survive. Destroy. Dismantle.*
 
 [![Unity](https://img.shields.io/badge/Unity-2022.3.62f1-black?logo=unity)](https://unity.com/)
-[![License](https://img.shields.io/badge/License-MIT-red)]()
-[![Status](https://img.shields.io/badge/Status-In%20Development-orange)]()
+[![Status](https://img.shields.io/badge/Status-Released%20-orange)]()
 
 </div>
 
